@@ -17,11 +17,20 @@ session_start();
                         <h5 class="card-title">Informations utilisateur</h5>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item">
-                                <strong>Email :</strong> <?php echo htmlspecialchars($_SESSION['LOGGED_USER']['email']); ?>
+                                <strong>Email :</strong> <?php echo ($_SESSION['LOGGED_USER']['email']); ?>
                             </li>
                             <li class="list-group-item">
-                                <strong>ID utilisateur :</strong> <?php echo htmlspecialchars($_SESSION['LOGGED_USER']['user_id']); ?>
+                                <strong>ID utilisateur :</strong> <?php echo ($_SESSION['LOGGED_USER']['user_id']); ?>
                             </li>
+
+                            
+
+
+
+
+
+
+                          
                         </ul>
                     </div>
                     <div class="card-footer text-center">

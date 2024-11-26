@@ -13,24 +13,52 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>Bla</td>
-          <td>Bla Bla</td>
-          
-          <td>
-            <button type="button" class="btn btn-warning btn-sm">Modifier</button>
-            <button type="button" class="btn btn-danger btn-sm">Supprimer</button>
-          </td>
-        </tr>
-        <tr>
-          <td>Exemple</td>
-          <td>Auteur 2</td>
+      <?php 
+            
+            require 'DbConnection.php';
+
+            if($pdo){
+              $req = "SELECT *
+       FROM Genre";
+       
+       
+       $res=$pdo->query($req);
+                if ($res->rowCount()== 0){
+                    echo "resultat vide";
+                }else {
+                    while($ligne=$res->fetch(PDO::FETCH_ASSOC)){    
+                        ?>
+
+              <tr>
+                <td><?php echo ($ligne['nom']); ?></td>
+                <td><?php if($ligne['description'] == null)  {
+                  
+                  echo "---";
+                
+                }else {
+                  echo ($ligne['description']); 
+                }
+                
+                
+                ?></td>
+            
+                <td>
+                  <a href="modifierlivre.php" class="btn btn-warning btn-sm">Modifier</a>
+                  <a href="suppgenre.php?id=<?php echo $ligne['id']; ?>" class="btn btn-danger btn-sm">Supprimer</a>
+                </td>
+              </tr>
+
+
+            <?php
+                    }
+                }
+                
+            }
+            
+            
+            ?>
          
-          <td>
-            <button type="button" class="btn btn-warning btn-sm">Modifier</button>
-            <button type="button" class="btn btn-danger btn-sm">Supprimer</button>
-          </td>
-        </tr>
+         
       </tbody>
     </table>
 
@@ -51,23 +79,23 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form>
-            <div class="mb-3">
+   <form action="ajoutgenre.php" method="POST">
+        <div class="mb-3">
               <label for="bookTitle" class="form-label">Nom</label>
-              <input type="text" class="form-control" id="bookTitle" placeholder="Entrez le nom du genre" required>
+              <input type="text" class="form-control" id="bookTitle" name="nom" placeholder="Entrez le nom du genre" required>
             </div>
             <div class="mb-3">
               <label for="bookAuthor" class="form-label">Description</label>
-              <input type="text" class="form-control" id="bookAuthor" placeholder="Entrez la description du genre" required>
+              <input type="text" class="form-control" id="bookAuthor" name="desc" placeholder="Entrez la description du genre" required>
             </div>
-            
+            <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-primary">Ajouter</button>
+        </div>
            
           </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-          <button type="button" class="btn btn-primary">Ajouter</button>
-        </div>
+      
       </div>
     </div>
   </div>
