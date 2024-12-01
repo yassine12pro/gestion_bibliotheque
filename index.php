@@ -33,7 +33,7 @@ require 'header.php';
             // Si une recherche a été effectuée, on applique la recherche
             if (isset($_GET['query']) && !empty($_GET['query'])) {
                 $query = "%" . $_GET['query'] . "%"; // Recherche avec des wildcards
-                $req = "SELECT Livre.id, Livre.titre, Livre.auteur_id, Livre.disponible dispo, Auteur.nom AS auteur_nom 
+                $req = "SELECT Livre.id,Livre.image , Livre.titre, Livre.auteur_id, Livre.disponible dispo, Auteur.nom AS auteur_nom 
                         FROM Livre 
                         JOIN Auteur ON Livre.auteur_id = Auteur.id 
                         WHERE Livre.titre LIKE :query OR Auteur.nom LIKE :query";
@@ -42,7 +42,7 @@ require 'header.php';
                 $stmt->execute(['query' => $query]);
             } else {
                 // Si pas de recherche, on affiche tous les livres
-                $req = "SELECT Livre.id, Livre.titre, Livre.auteur_id, Livre.disponible dispo, Auteur.nom AS auteur_nom 
+                $req = "SELECT Livre.id,Livre.image ,Livre.titre, Livre.auteur_id, Livre.disponible dispo, Auteur.nom AS auteur_nom 
                         FROM Livre 
                         JOIN Auteur ON Livre.auteur_id = Auteur.id";
                 
@@ -56,7 +56,9 @@ require 'header.php';
                     <!-- Carte de livre -->
                     <div class="col">
                         <div class="card">
-                            <img src="https://via.placeholder.com/150" class="card-img-top" alt="Image du livre">
+                            <img src="<?= htmlspecialchars($ligne['image']) ?>" class="card-img-top w-100" 
+                            style="height: 250px; object-fit: cover;"  alt="Image du livre">
+
                             <div class="card-body">
                                 <h5 class="card-title"><?php echo htmlspecialchars($ligne['titre']); ?></h5>
                                 <p class="card-text">Auteur: <?php echo htmlspecialchars($ligne['auteur_nom']); ?></p>

@@ -42,6 +42,21 @@ session_start();
                 <li class="nav-item">
                     <a class="nav-link active" href="/">Accueil</a>
                 </li>
+
+                <?php  
+                    require 'DbConnection.php';
+                    $id=$_SESSION['LOGGED_USER']['user_id'];
+
+                 $stmt = $pdo->prepare("SELECT role FROM Utilisateur where id=:id");
+                 $stmt->execute(['id' => $id]);
+                 $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                 if ($result && $result['role'] === 'admin') {
+
+                ?>
+
+
+
                 <li class="nav-item">
                     <a class="nav-link" href="gestionlivre.php">Livres</a>
                 </li>
@@ -51,6 +66,11 @@ session_start();
                 <li class="nav-item">
                     <a class="nav-link" href="gestiongenres.php">Genres</a>
                 </li>
+
+                    
+                <?php   } ?>
+
+
 
                 <!-- Affichage en fonction de l'état de connexion -->
                 <?php if (isset($_SESSION['LOGGED_USER'])): ?>

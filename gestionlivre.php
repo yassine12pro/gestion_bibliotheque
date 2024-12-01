@@ -7,6 +7,7 @@
     <table class="container table table-bordered table-striped text-center mt-5 mb-5">
         <thead class="table-primary">
             <tr>
+            <th>Image</th>
                 <th class="col-2">Titre</th>
                 <th class="col-2">Auteur</th>
                 <th class="col-2">Genre</th>
@@ -24,7 +25,7 @@ if ($pdo) {
     if (isset($_GET['query']) && !empty($_GET['query'])) {
         // Recherche par titre
         $query = "%" . $_GET['query'] . "%"; 
-        $req = "SELECT Livre.id, Livre.titre, Livre.auteur_id, Livre.ISBN, Auteur.nom AS auteur_nom, Genre.nom AS nomg
+        $req = "SELECT Livre.id,Livre.image , Livre.titre, Livre.auteur_id, Livre.ISBN, Auteur.nom AS auteur_nom, Genre.nom AS nomg
                 FROM Livre
                 JOIN Auteur ON Livre.auteur_id = Auteur.id
                 JOIN Genre ON Livre.genre_id = Genre.id
@@ -35,7 +36,7 @@ if ($pdo) {
     } elseif (isset($_GET['auteur_query']) && !empty($_GET['auteur_query'])) {
         // Recherche par auteur
         $auteur_query = "%" . $_GET['auteur_query'] . "%"; 
-        $req = "SELECT Livre.id, Livre.titre, Livre.auteur_id, Livre.ISBN, Auteur.nom AS auteur_nom, Genre.nom AS nomg
+        $req = "SELECT Livre.id,Livre.image , Livre.titre, Livre.auteur_id, Livre.ISBN, Auteur.nom AS auteur_nom, Genre.nom AS nomg
                 FROM Livre
                 JOIN Auteur ON Livre.auteur_id = Auteur.id
                 JOIN Genre ON Livre.genre_id = Genre.id
@@ -45,10 +46,9 @@ if ($pdo) {
         $stmt->execute(['auteur_query' => $auteur_query]);
     } else {
         // Si pas de recherche, on affiche tous les livres
-        $req = "SELECT Livre.id, Livre.titre, Livre.auteur_id, Livre.ISBN, Auteur.nom AS auteur_nom, Genre.nom AS nomg
-                FROM Livre
-                JOIN Auteur ON Livre.auteur_id = Auteur.id
-                JOIN Genre ON Livre.genre_id = Genre.id";
+        $req = "SELECT Livre.*, Auteur.nom AS auteur_nom, Genre.nom AS nomg FROM Livre 
+                             JOIN Auteur ON Livre.auteur_id = Auteur.id 
+                             JOIN Genre ON Livre.genre_id = Genre.id";
         $stmt = $pdo->query($req);
     }
 
@@ -57,13 +57,19 @@ if ($pdo) {
         while ($ligne = $stmt->fetch(PDO::FETCH_ASSOC)) {
             ?>
             <tr>
+            <td>
+                    <?php if ($ligne['image']): ?>
+                        <img src="<?= htmlspecialchars($ligne['image']) ?>" alt="Image du livre" style="width: 100px; height: 80px;">
+                    <?php else: ?>
+                        Pas d'image
+                    <?php endif; ?>
+                </td>
                 <td><?php echo ($ligne['titre']); ?></td>
                 <td><?php echo ($ligne['auteur_nom']); ?></td>
                 <td><?php echo ($ligne['nomg']); ?></td>
                 <td><?php echo htmlspecialchars($ligne['ISBN']); ?></td>
                 <td>
-                <a href="modifierlivre.php?id=<?php echo $ligne['id']; ?>" class="btn btn-warning btn-sm" >Modifier</a>
-
+                <a class="btn btn-warning btn-sm" href="formmodifierlivre.php?id=<?php echo $ligne['id']; ?>">Modifier</a>
                     <a href="supplivre.php?id=<?php echo $ligne['id']; ?>" class="btn btn-danger btn-sm">Supprimer</a>
                 </td>
             </tr>
@@ -86,6 +92,23 @@ if ($pdo) {
         </div>
     </div>
 
+    <?php
+require 'DbConnection.php';
+
+try {
+    // Récupérer les auteurs
+    $stmt = $pdo->query("SELECT id, nom FROM Auteur");
+    $auteurs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Récupérer les genres
+    $stmt = $pdo->query("SELECT id, nom FROM Genre");
+    $genres = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Erreur : " . $e->getMessage();
+}
+?>
+
+
     <!-- Modal1 - Ajouter un Livre -->
     <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -95,29 +118,43 @@ if ($pdo) {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="ajoutlivre.php" method="POST">
-                        <div class="mb-3">
-                            <label for="bookTitle" class="form-label">Titre</label>
-                            <input type="text" class="form-control" name="titre" id="bookTitle" placeholder="Entrez le titre du livre" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="bookAuthor" class="form-label">Auteur</label>
-                            <input type="text" class="form-control" name="auteur" id="bookAuthor" placeholder="Entrez le nom de l'auteur" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="bookGenre" class="form-label">Genre</label>
-                            <input type="text" class="form-control" name="genre" id="bookGenre" placeholder="Entrez le genre" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="bookISBN" class="form-label">ISBN</label>
-                            <input type="text" class="form-control" name="isbn" id="bookISBN" placeholder="Entrez le numéro ISBN" required>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                            <button type="submit" class="btn btn-primary">Ajouter</button>
-                        </div>
-                    </form>
-                </div>
+                <form action="ajoutlivre.php" method="POST" enctype="multipart/form-data">    <div class="mb-3">
+    <label for="bookImage" class="form-label">Image</label>
+    <input type="file" class="form-control" name="image" id="bookImage" accept="image/*">
+</div>
+        <div class="mb-3">
+            <label for="bookTitle" class="form-label">Titre</label>
+            <input type="text" class="form-control" name="titre" id="bookTitle" placeholder="Entrez le titre du livre" required>
+        </div>
+        <div class="mb-3">
+            <label for="bookAuthor" class="form-label">Auteur</label>
+            <select class="form-control" name="auteur_id" id="bookAuthor" required>
+                <option value="">Sélectionnez un auteur</option>
+                <?php foreach ($auteurs as $auteur): ?>
+                    <option value="<?= $auteur['id'] ?>"><?= htmlspecialchars($auteur['nom']) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="bookGenre" class="form-label">Genre</label>
+            <select class="form-control" name="genre_id" id="bookGenre" required>
+                <option value="">Sélectionnez un genre</option>
+                <?php foreach ($genres as $genre): ?>
+                    <option value="<?= $genre['id'] ?>"><?= htmlspecialchars($genre['nom']) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="bookISBN" class="form-label">ISBN</label>
+            <input type="text" class="form-control" name="isbn" id="bookISBN" placeholder="Entrez le numéro ISBN" required>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+            <button type="submit" class="btn btn-primary">Ajouter</button>
+        </div>
+    </form>
+</div>
+
             </div>
         </div>
     </div>
@@ -139,6 +176,7 @@ if ($pdo) {
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
                             <button type="submit" class="btn btn-primary">Rechercher</button>
+             
                         </div>
                     </form>
                 </div>
@@ -171,41 +209,7 @@ if ($pdo) {
     </div>
 
 
-    <!-- Modal4 - modifier un Livre -->
-    <div class="modal fade" id="modbook" tabindex="-1" aria-labelledby="modbook" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addBookModalLabel">Modifier un Livre</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="modifierlivre.php" method="POST">
-                        <div class="mb-3">
-                            <label for="bookTitle" class="form-label">Titre</label>
-                            <input type="text" class="form-control" name="titre" id="bookTitle" placeholder="Entrez le titre du livre" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="bookAuthor" class="form-label">Auteur</label>
-                            <input type="text" class="form-control" name="auteur" id="bookAuthor" placeholder="Entrez le nom de l'auteur" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="bookGenre" class="form-label">Genre</label>
-                            <input type="text" class="form-control" name="genre" id="bookGenre" placeholder="Entrez le genre" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="bookISBN" class="form-label">ISBN</label>
-                            <input type="text" class="form-control" name="isbn" id="bookISBN" placeholder="Entrez le numéro ISBN" required>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                            <a href="modifierlivre.php?id=<?php echo $ligne['id']; ?>"  class="btn btn-primary">Modifier</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+   
 
 </main>
 

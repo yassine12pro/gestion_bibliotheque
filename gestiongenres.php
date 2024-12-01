@@ -43,7 +43,7 @@
                 ?></td>
             
                 <td>
-                  <a href="modifierlivre.php" class="btn btn-warning btn-sm">Modifier</a>
+                  <a href="formmodifiergenre.php?id=<?php echo $ligne['id']; ?>" class="btn btn-warning btn-sm">Modifier</a>
                   <a href="suppgenre.php?id=<?php echo $ligne['id']; ?>" class="btn btn-danger btn-sm">Supprimer</a>
                 </td>
               </tr>

@@ -3,64 +3,43 @@ require 'DbConnection.php';
 
 // Récupérer les valeurs du formulaire
 $titre = $_POST['titre'];
-$auteur = $_POST['auteur'];
-$genre = $_POST['genre'];
+$auteur_id = (int)$_POST['auteur_id'];
+$genre_id = (int)$_POST['genre_id'];
 $isbn = $_POST['isbn'];
+$imagePath = null;
+
+// Vérifier si une image a été téléchargée
+if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+    $uploadDir = 'uploads/'; // Dossier où stocker les images
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0777, true); // Créer le dossier s'il n'existe pas
+    }
+
+    $fileTmpPath = $_FILES['image']['tmp_name'];
+    $fileName = basename($_FILES['image']['name']);
+    $destinationPath = $uploadDir . $fileName;
+
+    // Déplacer le fichier vers le dossier cible
+    if (move_uploaded_file($fileTmpPath, $destinationPath)) {
+        $imagePath = $destinationPath;
+    } else {
+        echo "Erreur lors du téléchargement de l'image.";
+    }
+}
 
 try {
-    // Vérifier si l'auteur existe déjà
-    $stmt = $pdo->prepare("SELECT id FROM Auteur WHERE nom = :auteur");
-    $stmt->execute(['auteur' => $auteur]);
-    $auteurData = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($auteurData) {
-        $auteur_id = $auteurData['id'];
-    } else {
-        // Insérer un nouvel auteur
-        $stmt = $pdo->prepare("INSERT INTO Auteur (nom) VALUES (:auteur)");
-        $stmt->execute(['auteur' => $auteur]);
-        $auteur_id = $pdo->lastInsertId();
-    }
-
-    // Vérifier si le genre existe déjà
-    $stmt = $pdo->prepare("SELECT id FROM Genre WHERE nom = :genre");
-    $stmt->execute(['genre' => $genre]);
-    $genreData = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($genreData) {
-        $genre_id = $genreData['id'];
-    } else {
-        // Insérer un nouveau genre
-        $stmt = $pdo->prepare("INSERT INTO Genre (nom) VALUES (:genre)");
-        $stmt->execute(['genre' => $genre]);
-        $genre_id = $pdo->lastInsertId();
-    }
-
     // Insérer le livre
-    $auteur_id= (int)$auteur_id;
-    $genre_id = (int)$genre_id;
-    $req = "INSERT INTO Livre (titre, auteur_id, genre_id, ISBN, disponible)   VALUES ('$titre', $auteur_id, $genre_id, '$isbn', 1)";
+    $stmt = $pdo->prepare("INSERT INTO Livre (titre, auteur_id, genre_id, ISBN, disponible, image) VALUES (:titre, :auteur_id, :genre_id, :isbn, 1, :image)");
+    $stmt->execute([
+        'titre' => $titre,
+        'auteur_id' => $auteur_id,
+        'genre_id' => $genre_id,
+        'isbn' => $isbn,
+        'image' => $imagePath
+    ]);
 
-
-    try{
-        $res = $pdo->exec($req);
-        if($res == 0){
-            echo "problem d ajout";
-        }else {
-            header("location:gestionlivre.php");
-
-        } 
-    }catch(PDOException $e){
-        echo "Erreur ::: " . $e->getMessage();
-
-    }
-
-
-
-
-
-
-
+    header("Location: gestionlivre.php");
+    exit();
 } catch (PDOException $e) {
     echo "Erreur : " . $e->getMessage();
 }
