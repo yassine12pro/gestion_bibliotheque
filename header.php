@@ -52,6 +52,8 @@ session_start();
 
                 <?php  
                     require 'DbConnection.php';
+                    if(isset($_SESSION['LOGGED_USER'])) {
+                        
                     $id=$_SESSION['LOGGED_USER']['user_id'];
 
                  $stmt = $pdo->prepare("SELECT role FROM Utilisateur where id=:id");
@@ -75,7 +77,7 @@ session_start();
                 </li>
 
                     
-                <?php   } ?>
+                <?php  } } ?>
 
 
 
