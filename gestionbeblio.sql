@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost
--- Généré le : lun. 02 déc. 2024 à 10:24
+-- Généré le : lun. 02 déc. 2024 à 10:54
 -- Version du serveur : 8.0.37-0ubuntu0.23.10.2
 -- Version de PHP : 8.2.10-2ubuntu2.2
 
@@ -179,7 +179,7 @@ CREATE TABLE `Utilisateur` (
   `email` varchar(255) NOT NULL,
   `phone` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `role` varchar(25) NOT NULL
+  `role` enum('user','admin') DEFAULT 'user'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -190,7 +190,8 @@ INSERT INTO `Utilisateur` (`id`, `nom`, `email`, `phone`, `password`, `role`) VA
 (1, 'yass', 'yassin@gmail.com', '55444333', '$2y$10$J.UP5lJ3tLX8Wp4j5z6Fa.TlK3lUdyIlzh3WLiUpmH2ZArt80D9zm', 'user'),
 (2, 'imen', 'imen@gmail.com', '44333222', '$2y$10$PbXQuzHq8Ty3ZkKAKeQWJ.aUyKttlQULg/PG0ItpD4iaY4Wf1g75u', 'user'),
 (3, 'mhamed', 'mhamed@gmail.com', '66555444', 'mh123', 'user'),
-(4, 'arafet', 'arafet@gmail.com', '99333222', 'arafet123', 'admin');
+(4, 'arafet', 'arafet@gmail.com', '99333222', 'arafet123', 'admin'),
+(5, 'yassine', 'yassblk@gmail.com', '55434343', 'yassblk05', 'user');
 
 --
 -- Index pour les tables déchargées
@@ -291,7 +292,7 @@ ALTER TABLE `Livre`
 -- AUTO_INCREMENT pour la table `Utilisateur`
 --
 ALTER TABLE `Utilisateur`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Contraintes pour les tables déchargées
