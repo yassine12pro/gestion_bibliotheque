@@ -26,13 +26,20 @@ session_start();
             background-color: #343a40;
             color: white;
         }
+        .logo {
+        width: 130px; /* Set a width */
+        height: 120px; /* Set a height */
+        border-radius: 50%;
+        border: 1px gray solid ;
+        }
+
     </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
         <a class="navbar-brand" href="/">
-            <img src="assets/istockphoto-1270155083-612x612.jpg" alt="Logo" class="img-fluid" style="height: 80px;">
+            <img src="assets/istockphoto-1270155083-612x612.jpg" alt="Logo" class="img-fluid logo" style="height: 80px;">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>

@@ -26,7 +26,7 @@ try {
             'date_emprunt' => date('Y-m-d')
         ]);
 
-
+          // Ajouter l'historique de lemprunt dans la base de données
         $stmt = $pdo->prepare("INSERT INTO historique_emprunts (utilisateur_id, livre_id, date_emprunt) VALUES (:user_id, :livre_id, :date_emprunt)");
         $stmt->execute([
             'user_id' => $userId, 

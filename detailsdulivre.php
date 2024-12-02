@@ -31,15 +31,15 @@ if ($pdo) {
                 <div class="card-body">
                     <div class="mb-3">
                         <h5 class="card-title text-primary-emphasis">Titre</h5>
-                        <p class="card-text"><?php echo htmlspecialchars($ligne['titre']); ?></p>
+                        <p class="card-text"><?php echo ($ligne['titre']); ?></p>
                     </div>
                     <div class="mb-3">
                         <h5 class="card-title text-primary-emphasis">Auteur</h5>
-                        <p class="card-text"><?php echo htmlspecialchars($ligne['auteur_nom']); ?></p>
+                        <p class="card-text"><?php echo ($ligne['auteur_nom']); ?></p>
                     </div>
                     <div class="mb-3">
                         <h5 class="card-title text-primary-emphasis">Genre</h5>
-                        <p class="card-text"><?php echo htmlspecialchars($ligne['nomg']); ?></p>
+                        <p class="card-text"><?php echo ($ligne['nomg']); ?></p>
                     </div>
                     <div class="mb-3 d-flex justify-content-between align-items-center">
                         <div>
@@ -60,11 +60,18 @@ if ($pdo) {
                         <?php
                             if(isset($_SESSION['LOGGED_USER'])){  
                                 if($ligne['dispo'] == 1){    ?>
-                                    <a href="emp.php?id=<?php echo $ligne['id']; ?>" class="btn btn-primary ms-auto mx-5 p-3">Emprunter</a> 
- 
+                                  <div>
+                                  <a href="emp.php?id=<?php echo $ligne['id']; ?>" class="btn btn-success ms-auto mx-5 p-3">Emprunter</a> 
+                                  <a href="ajoutcomment.php?id=<?php echo $ligne['id']; ?>" class="btn btn-danger ms-auto mx-5 p-3">Ajouter Un Commentaire</a> 
+                                  </div>
+
                                     <?php      } else {  ?>
 
-                    <button type="submit" class="btn btn-primary ms-auto mx-5 p-3" disabled>Emprunter</button>
+                   <div>
+                   <button type="submit" class="btn btn-primary ms-auto mx-5 p-3" disabled>Emprunter</button>
+                    <a href="ajoutcomment.php?id=<?php echo $ligne['id']; ?>" class="btn btn-danger ms-auto mx-5 p-3">Ajouter Un Commentaire</a> 
+
+                   </div>
                  <?php 
                                     } 
                        
@@ -84,12 +91,29 @@ if ($pdo) {
 }
 ?>
 
-<div class="container mt-5 ">
-    <h3>Critiques d'utilisateurs :</h3>
-    <ul>
-        <li>Bla bla</li>
-    </ul>
-</div>
+
+<?php  
+
+$id = intval($_GET['id']); 
+
+$sql = "SELECT * FROM commentaires WHERE livre_id = :id ORDER BY date_creation DESC";
+$stmt = $pdo->prepare($sql);
+$stmt->execute(['id' => $id]);
+
+if ($stmt->rowCount() > 0) {
+    echo "<h1 class='mt-4 container text-primary'>les critiques des utilisateurs :</h1>";
+
+    while ($comment = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        echo "<div class='mt-5 p-3 border border-secondary rounded container'>";
+        echo "<p><strong>Commentaire :</strong> " . ($comment['commentaire']) . "</p>";
+        echo "<small class='text-muted'>Posté le : " . ($comment['date_creation']) . "</small>";
+        echo "</div>";
+    }
+} 
+
+?>
+
+
 
 </main>
 

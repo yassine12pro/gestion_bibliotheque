@@ -32,7 +32,7 @@ require 'header.php';
         if ($pdo) {
             // Si une recherche a été effectuée, on applique la recherche
             if (isset($_GET['query']) && !empty($_GET['query'])) {
-                $query = "%" . $_GET['query'] . "%"; // Recherche avec des wildcards
+                $query = "%" . $_GET['query'] . "%"; 
                 $req = "SELECT Livre.id,Livre.image , Livre.titre, Livre.auteur_id, Livre.disponible dispo, Auteur.nom AS auteur_nom 
                         FROM Livre 
                         JOIN Auteur ON Livre.auteur_id = Auteur.id 
@@ -81,10 +81,11 @@ require 'header.php';
                             </div>
                         </div>
                     </div>
+                    
                     <?php
                 }
             } else {
-                echo "<p class='text-center text-danger'>Aucun livre trouvé pour votre recherche.</p>";
+                echo "<p class='text-center text-danger'>Aucun livre trouvé .</p>";
             }
         }
         ?>

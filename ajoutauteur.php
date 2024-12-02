@@ -12,10 +12,9 @@ $dn = $_POST['dn']; // Récupère la date au format 'YYYY-MM-DD'
 if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dn)) {
     echo "Date de naissance invalide.";
     exit;
-}
+} 
 
 try {
-    // Préparer et exécuter la requête
     $stmt = $pdo->prepare("INSERT INTO Auteur (nom, biographie, date_de_naissance) 
                            VALUES (:nom, :bio, :dn)");
     $stmt->execute([

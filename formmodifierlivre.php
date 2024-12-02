@@ -26,12 +26,12 @@ $livre = $livreStmt->fetch(PDO::FETCH_ASSOC);
 
 <form action="modifierlivre.php" method="POST">
     <!-- Champ caché pour envoyer l'ID -->
-    <input type="hidden" name="id" value="<?= htmlspecialchars($id); ?>">
+    <input type="hidden" name="id" value="<?= ($id); ?>">
 
     <!-- Champ Titre -->
     <div class="mb-3">
         <label for="bookTitle" class="form-label">Titre</label>
-        <input type="text" class="form-control" value="<?= htmlspecialchars($livre['titre']); ?>" 
+        <input type="text" class="form-control" value="<?= ($livre['titre']); ?>" 
                name="titre" id="bookTitle"  required>
     </div>
 
@@ -42,7 +42,7 @@ $livre = $livreStmt->fetch(PDO::FETCH_ASSOC);
             <?php foreach ($auteurs as $auteur): ?>
                 <option value="<?= $auteur['id']; ?>" 
                     <?= $auteur['id'] == $livre['auteur_id'] ? 'selected' : ''; ?>>
-                    <?= htmlspecialchars($auteur['nom']); ?>
+                    <?= ($auteur['nom']); ?>
                 </option>
             <?php endforeach; ?>
         </select>
@@ -55,7 +55,7 @@ $livre = $livreStmt->fetch(PDO::FETCH_ASSOC);
             <?php foreach ($genres as $genre): ?>
                 <option value="<?= $genre['id']; ?>" 
                     <?= $genre['id'] == $livre['genre_id'] ? 'selected' : ''; ?>>
-                    <?= htmlspecialchars($genre['nom']); ?>
+                    <?= ($genre['nom']); ?>
                 </option>
             <?php endforeach; ?>
         </select>
@@ -64,7 +64,7 @@ $livre = $livreStmt->fetch(PDO::FETCH_ASSOC);
     <!-- Champ ISBN -->
     <div class="mb-3">
         <label for="bookISBN" class="form-label">ISBN</label>
-        <input type="text" class="form-control" value="<?= htmlspecialchars($livre['ISBN']); ?>" 
+        <input type="text" class="form-control" value="<?= ($livre['ISBN']); ?>" 
                name="isbn" id="bookISBN"  required>
     </div>
 
